@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></link>
+  <style>
+    body { margin: 0; background: oklch(0.98 0.005 60); }
+    a { color: oklch(0.45 0.13 30); text-decoration: none; }
+    a:hover { color: oklch(0.35 0.15 30); }
+    ::selection { background: oklch(0.85 0.08 30); }
+  </style>
+</helmet>
+
+<div style="font-family: 'Sora', sans-serif; color: oklch(0.2 0.01 60); background: oklch(0.98 0.005 60); min-height: 100vh;">
+
+  <!-- Header -->
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid oklch(0.9 0.01 60); position: sticky; top: 0; background: oklch(0.98 0.005 60 / 0.95); z-index: 10;">
+    <div style="display: flex; align-items: center; gap: 40px;">
+      <div style="font-family: 'Source Serif 4', serif; font-weight: 600; font-size: 24px; letter-spacing: -0.02em;">Formwork</div>
+      <nav style="display: flex; gap: 28px; font-size: 14px; font-weight: 500; color: oklch(0.4 0.01 60); white-space: nowrap;">
+        <a href="#" style="color: inherit;">Browse</a>
+        <a href="#" style="color: inherit;">Categories</a>
+        <a href="#" style="color: inherit;">Creators</a>
+        <a href="#" style="color: inherit;">Print Guide</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 8px; background: white; border: 1px solid oklch(0.9 0.01 60); border-radius: 8px; padding: 8px 14px; width: 280px;">
+        <div style="width: 14px; height: 14px; border: 1.5px solid oklch(0.55 0.01 60); border-radius: 50%; flex-shrink: 0;"></div>
+        <span style="font-size: 13px; color: oklch(0.55 0.01 60);">Search models, creators, tags…</span>
+      </div>
+      <a href="#" style="font-size: 14px; font-weight: 500; color: oklch(0.2 0.01 60);">Sign in</a>
+      <div style="width: 36px; height: 36px; border-radius: 50%; background: oklch(0.2 0.01 60); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 14px; height: 14px; border: 1.5px solid white; border-radius: 3px;"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section style="display: flex; align-items: center; gap: 64px; padding: 80px 48px; max-width: 1400px; margin: 0 auto;">
+    <div style="flex: 1;">
+      <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.45 0.13 30); margin-bottom: 20px;">Marketplace for 3D creators</div>
+      <h1 style="font-family: 'Source Serif 4', serif; font-size: 56px; line-height: 1.08; font-weight: 600; margin: 0 0 24px; letter-spacing: -0.01em;">Print-ready models,<br>made by independent designers.</h1>
+      <p style="font-size: 17px; line-height: 1.6; color: oklch(0.45 0.01 60); max-width: 480px; margin: 0 0 32px;">Browse thousands of STL and OBJ files for FDM and resin printing — vetted, print-tested, and ready to slice.</p>
+      <div style="display: flex; gap: 14px;">
+        <a href="#" style="background: oklch(0.2 0.01 60); color: white; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;">Browse models</a>
+        <a href="#" style="border: 1px solid oklch(0.85 0.01 60); color: oklch(0.2 0.01 60); padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;">Sell your designs</a>
+      </div>
+    </div>
+    <div style="flex: 1; aspect-ratio: 4/3; border-radius: 16px; background: repeating-linear-gradient(135deg, oklch(0.93 0.01 60), oklch(0.93 0.01 60) 12px, oklch(0.9 0.01 60) 12px, oklch(0.9 0.01 60) 24px); display: flex; align-items: center; justify-content: center;">
+      <span style="font-family: monospace; font-size: 12px; color: oklch(0.5 0.01 60); background: oklch(0.98 0.005 60); padding: 6px 12px; border-radius: 6px;">hero render — rotating model</span>
+    </div>
+  </section>
+
+  <!-- Category chips -->
+  <section style="padding: 0 48px 40px; max-width: 1400px; margin: 0 auto;">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="8">
+        <div style="padding: 9px 18px; border-radius: 100px; border: 1px solid oklch(0.88 0.01 60); font-size: 14px; font-weight: 500; color: oklch(0.35 0.01 60); background: white;">{{ cat }}</div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- Catalog -->
+  <section style="padding: 0 48px 40px; max-width: 1400px; margin: 0 auto;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px;">
+      <h2 style="font-size: 22px; font-weight: 600; margin: 0;">Trending this week</h2>
+      <a href="#" style="font-size: 14px; font-weight: 600;">View all →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+        <div style="background: white; border: 1px solid oklch(0.92 0.01 60); border-radius: 12px; overflow: hidden;">
+          <div style="aspect-ratio: 1; background: repeating-linear-gradient(135deg, oklch(0.94 0.01 60), oklch(0.94 0.01 60) 10px, oklch(0.91 0.01 60) 10px, oklch(0.91 0.01 60) 20px); display: flex; align-items: center; justify-content: center; position: relative;">
+            <span style="font-family: monospace; font-size: 11px; color: oklch(0.5 0.01 60); background: oklch(0.98 0.005 60); padding: 4px 10px; border-radius: 5px;">product render</span>
+            <div style="position: absolute; top: 10px; left: 10px; background: oklch(0.98 0.005 60 / 0.9); font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 5px; color: oklch(0.35 0.01 60);">{{ p.format }}</div>
+          </div>
+          <div style="padding: 16px;">
+            <div style="font-size: 15px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em;">{{ p.name }}</div>
+            <div style="font-size: 13px; color: oklch(0.5 0.01 60); margin-bottom: 12px;">by {{ p.creator }}</div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 16px; font-weight: 700; color: oklch(0.45 0.13 30);">{{ p.price }}</span>
+              <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: oklch(0.5 0.01 60);">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.75 0.13 30);"></div>
+                {{ p.rating }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- Featured creator strip -->
+  <section style="padding: 0 48px 80px; max-width: 1400px; margin: 0 auto;">
+    <div style="background: oklch(0.2 0.01 60); border-radius: 16px; padding: 48px; display: flex; align-items: center; gap: 48px; color: white;">
+      <div style="width: 120px; height: 120px; border-radius: 50%; background: repeating-linear-gradient(135deg, oklch(0.3 0.01 60), oklch(0.3 0.01 60) 8px, oklch(0.26 0.01 60) 8px, oklch(0.26 0.01 60) 16px); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+        <span style="font-family: monospace; font-size: 9px; color: oklch(0.75 0.01 60);">avatar</span>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.75 0.13 30); margin-bottom: 10px;">Creator spotlight</div>
+        <h3 style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 600; margin: 0 0 10px;">Mara Voss Studio</h3>
+        <p style="font-size: 15px; line-height: 1.6; color: oklch(0.85 0.01 60); max-width: 560px; margin: 0;">Architectural miniatures and modular terrain systems, printed and tested on FDM and resin. 240 models, 12,000+ downloads.</p>
+      </div>
+      <a href="#" style="background: white; color: oklch(0.2 0.01 60); padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; flex-shrink: 0;">View shop</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid oklch(0.9 0.01 60); padding: 48px; max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; font-size: 13px; color: oklch(0.5 0.01 60);">
+    <div style="font-family: 'Source Serif 4', serif; font-weight: 600; font-size: 18px; color: oklch(0.2 0.01 60);">Formwork</div>
+    <div style="display: flex; gap: 32px;">
+      <a href="#">Browse</a>
+      <a href="#">Sell</a>
+      <a href="#">Help</a>
+      <a href="#">Terms</a>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      categories: ["Miniatures", "Home & Decor", "Tools & Gadgets", "Terrain & Scenery", "Cosplay & Props", "Mechanical", "Jewelry", "Toys & Games"],
+      products: [
+        { name: "Modular Dungeon Tile Set", creator: "Mara Voss Studio", price: "$14", rating: "4.9", format: "STL" },
+        { name: "Articulated Dragon", creator: "Kettle & Forge", price: "$22", rating: "4.8", format: "STL" },
+        { name: "Desk Organizer Tray", creator: "Nordlie Design", price: "$6", rating: "4.7", format: "OBJ" },
+        { name: "Low-Poly Fox Planter", creator: "Studio Bracket", price: "$9", rating: "4.9", format: "STL" },
+        { name: "Gear Puzzle Box", creator: "Kettle & Forge", price: "$18", rating: "5.0", format: "STL" },
+        { name: "Wall-Mount Cable Clip", creator: "Nordlie Design", price: "$3", rating: "4.6", format: "OBJ" },
+        { name: "Sci-Fi Helmet Bust", creator: "Vantage Forms", price: "$26", rating: "4.8", format: "STL" },
+        { name: "Stacking Planter System", creator: "Studio Bracket", price: "$12", rating: "4.9", format: "STL" }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

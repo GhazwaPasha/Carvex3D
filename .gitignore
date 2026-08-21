@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+web/dist/
+web/dist-ssr/
+*.local
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Legacy Claude Design export & source material ---
+# T0008545/ is the raw CNC-file reference dump (~57MB of STLs) used to build
+# the original design mockup — not part of the shipped site.
+/T0008545/
+# Historical debug screenshots from the design-tool iteration process,
+# confirmed unused by any page.
+/screenshots/
+# Root-level uploads/ duplicates web/public/uploads/ (the copy that's
+# actually served) — no need to track the STL twice. Anchored to repo root
+# so it doesn't also match web/public/uploads/.
+/uploads/

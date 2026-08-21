@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; }
+  three-d-stage:not(:defined) { visibility: hidden; }
+</style>
+</head>
+<body>
+<three-d-stage name="vise_jaw_set" background="transparent" style="width:100vw;height:100vh;display:block;"></three-d-stage>
+<script src="./three-d-stage.js"></script>
+<script type="module">
+  const stage = document.querySelector('three-d-stage');
+  const { THREE } = await stage.ready;
+  const toolbar = stage.shadowRoot.querySelector('.toolbar');
+  if (toolbar) toolbar.style.display = 'none';
+
+  const steel = new THREE.MeshStandardMaterial({ name: "steel", color: 0x9aa0a6, roughness: 0.35, metalness: 0.35 });
+  const neutral = new THREE.MeshStandardMaterial({ name: "neutral_anno", color: 0xc7cad0, roughness: 0.4, metalness: 0.25 });
+
+  const group = new THREE.Group();
+
+  // base plate
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.02, 0.14), steel);
+  base.name = "base_plate";
+  base.position.set(0, 0.01, 0);
+  base.castShadow = true; base.receiveShadow = true;
+  group.add(base);
+
+  // fixed jaw (tall block, one side)
+  const fixedJaw = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.09, 0.14), steel);
+  fixedJaw.name = "fixed_jaw";
+  fixedJaw.position.set(-0.09, 0.065, 0);
+  fixedJaw.castShadow = true; fixedJaw.receiveShadow = true;
+  group.add(fixedJaw);
+
+  // movable jaw
+  const moveJaw = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.09, 0.14), steel);
+  moveJaw.name = "movable_jaw";
+  moveJaw.position.set(0.04, 0.065, 0);
+  moveJaw.castShadow = true; moveJaw.receiveShadow = true;
+  group.add(moveJaw);
+
+  // lead screw (cylinder through both jaws)
+  const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.22, 24), steel);
+  screw.name = "lead_screw";
+  screw.rotation.z = Math.PI / 2;
+  screw.position.set(-0.02, 0.065, 0.05);
+  screw.castShadow = true;
+  group.add(screw);
+
+  // dowel pins x2, alignment features (orange = annotated feature)
+  for (const zSign of [1, -1]) {
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.03, 16), neutral);
+    pin.name = "dowel_pin_" + (zSign > 0 ? "a" : "b");
+    pin.position.set(-0.02, 0.03, zSign * 0.055);
+    pin.castShadow = true;
+    group.add(pin);
+  }
+
+  // handle knob on lead screw
+  const knob = new THREE.Mesh(new THREE.TorusGeometry(0.018, 0.006, 12, 24), neutral);
+  knob.name = "screw_handle";
+  knob.position.set(-0.09, 0.065, 0.14);
+  knob.rotation.y = Math.PI / 2;
+  knob.castShadow = true;
+  group.add(knob);
+
+  // mounting bolts, 4 corners
+  const bx = 0.1, bz = 0.06;
+  for (const sx of [-1, 1]) {
+    for (const sz of [-1, 1]) {
+      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.024, 12), steel);
+      bolt.name = "mount_bolt";
+      bolt.position.set(sx * bx, 0.03, sz * bz);
+      bolt.castShadow = true;
+      group.add(bolt);
+    }
+  }
+
+  group.position.y = 0;
+  stage.setObject(group);
+</script>
+</body>
+</html>

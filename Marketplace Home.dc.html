@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></link>
+  <style>
+    body { margin: 0; background: oklch(0.16 0.006 60); }
+    a { color: oklch(0.78 0.012 240); text-decoration: none; }
+    a:hover { color: oklch(0.85 0.012 240); }
+    ::selection { background: oklch(0.35 0.01 240); }
+    .icon-btn { display: inline-flex; align-items: center; justify-content: center; overflow: hidden; width: 52px; height: 52px; padding: 14px; border-radius: 12px; white-space: nowrap; box-sizing: border-box; transition: width 0.3s ease, padding 0.3s ease; }
+    .icon-btn .icon-btn-label { max-width: 0; opacity: 0; overflow: hidden; margin-left: 0; transition: max-width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease; }
+    .icon-btn:hover { width: auto; padding: 14px 24px; }
+    .icon-btn:hover .icon-btn-label { max-width: 260px; opacity: 1; margin-left: 10px; }
+  </style>
+</helmet>
+
+<div style="font-family: 'Sora', sans-serif; color: oklch(0.94 0.004 60); background: rgb(24,27,31); min-height: 100vh; background-image: linear-gradient(oklch(0.22 0.006 60 / 0.5) 1px, transparent 1px), linear-gradient(90deg, oklch(0.22 0.006 60 / 0.5) 1px, transparent 1px); background-size: 48px 48px;">
+
+  <!-- Header -->
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid oklch(0.3 0.01 60); position: sticky; top: 0; background: oklch(0.16 0.006 60 / 0.95); z-index: 10; gap: 16px; flex-wrap: nowrap;">
+    <div style="display: flex; align-items: center; gap: 20px; flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+        <div style="width: 20px; height: 20px; background: oklch(0.78 0.012 240); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); flex-shrink: 0;"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; white-space: nowrap;">TOLERANCE</div>
+      </div>
+      <nav style="display: flex; gap: 16px; font-size: 13px; font-weight: 500; color: oklch(0.7 0.01 60); white-space: nowrap; flex-shrink: 0;">
+        <a href="Browse.dc.html" style="color: inherit;">Browse</a>
+        <a href="#" style="color: inherit;">Categories</a>
+        <a href="Shop.dc.html" style="color: inherit;">Shops</a>
+        <a href="#" style="color: inherit;">Machining Guide</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 6px; background: oklch(0.2 0.006 60); border: 1px solid oklch(0.32 0.01 60); border-radius: 4px; padding: 7px 12px; width: 130px; flex-shrink: 0;">
+        <div style="width: 12px; height: 12px; border: 1.5px solid oklch(0.6 0.01 60); border-radius: 50%; flex-shrink: 0;"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: oklch(0.6 0.01 60); white-space: nowrap;">search…</span>
+      </div>
+      <a href="https://wa.me/15551234567" style="background: oklch(0.78 0.012 240); color: oklch(0.16 0.006 60); padding: 9px 16px; border-radius: 4px; font-size: 13px; font-weight: 700; flex-shrink: 0; white-space: nowrap;">Message on WhatsApp</a>
+    </div>
+  </header>
+
+  <!-- Scroll-driven 3D hero -->
+  <div ref="{{ heroRef }}" style="position: relative; height: 930vh;">
+    <div style="position: sticky; top: 0; height: 100vh; overflow: hidden; background: rgb(24,27,31);">
+      <div style="position: absolute; inset: 0; background: radial-gradient(circle at 30% 40%, oklch(0.32 0.03 240), oklch(0.16 0.01 240) 70%); opacity: {{ section1Opacity }}; transition: opacity 0.4s linear;"></div>
+      <div style="position: absolute; inset: 0; background: radial-gradient(circle at 70% 60%, oklch(0.3 0.03 300), oklch(0.14 0.01 260) 70%); opacity: {{ section2Opacity }}; transition: opacity 0.4s linear;"></div>
+      <div style="position: absolute; inset: 0; background: radial-gradient(circle at 30% 60%, oklch(0.32 0.09 25), oklch(0.15 0.02 25) 70%); opacity: {{ section3Opacity }}; transition: opacity 0.4s linear;"></div>
+      <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, oklch(0.32 0.08 145), oklch(0.15 0.02 145) 70%); opacity: {{ section4Opacity }}; transition: opacity 0.4s linear;"></div>
+      <div style="position: absolute; inset: 0; background: #000; opacity: {{ introOpacity }};"></div>
+      <div style="position: absolute; top: 76px; left: 0; width: 58%; height: calc(100% - 76px); transform: translateX({{ introOffsetVw }}vw); transition: transform 0.05s linear;">
+        <iframe ref="{{ iframeRef }}" src="HomeHero.html" title="Interactive 3D hero" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; display: block; pointer-events: none; background: transparent;"></iframe>
+        <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.55); opacity: {{ introOpacity }}; pointer-events: none;"></div>
+      </div>
+      <div style="position: absolute; inset: 0; background-image: linear-gradient(oklch(0.94 0.004 60 / 0.06) 1px, transparent 1px), linear-gradient(90deg, oklch(0.94 0.004 60 / 0.06) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none;"></div>
+
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 10%; opacity: {{ introOpacity }}; pointer-events: none;">
+        <blockquote style="max-width: 980px; text-align: center; margin: 0; padding: 0;">
+          <span style="display: block; font-family: 'Sora', sans-serif; font-size: 72px; line-height: 1; font-weight: 800; color: oklch(0.78 0.012 240); margin-bottom: 8px;">&ldquo;</span>
+          <p style="max-width: 700px; margin: 0 auto; text-align: center; font-size: 38px; line-height: 1.35; font-weight: 700; letter-spacing: -0.015em; color: oklch(0.96 0.004 60);">Your CNC machine is only as good as the designs you give it.<span style="font-weight: 700;">&rdquo;</span></p>
+        </blockquote>
+      </div>
+
+      <div style="position: absolute; top: 0; right: 0; width: 38%; height: 100%; display: flex; align-items: center; padding: 0 64px; opacity: {{ section1Opacity }}; transform: translateY({{ section1Y }}vh); transition: opacity 0.4s linear, transform 0.4s linear; pointer-events: none;">
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.78 0.012 240); margin-bottom: 20px;">01 — Ready-made</div>
+          <h2 style="font-size: 52px; line-height: 1.05; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">Browse Library</h2>
+          <p style="font-size: 17px; line-height: 1.6; color: oklch(0.7 0.008 60); margin: 0 0 28px;">Toleranced, shop-tested CAD files ready to mill or lathe today.</p>
+          <a href="Browse.dc.html" class="icon-btn" style="background: oklch(0.6 0.09 240); color: oklch(0.14 0.004 60); font-size: 15px; font-weight: 700; pointer-events: auto;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"></rect><rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor"></rect><rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor"></rect><rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor"></rect></svg>
+            <span class="icon-btn-label">Browse Library</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="position: absolute; top: 0; right: 0; width: 38%; height: 100%; display: flex; align-items: center; padding: 0 64px; opacity: {{ section2Opacity }}; transform: translateY({{ section2Y }}vh); transition: opacity 0.4s linear, transform 0.4s linear; pointer-events: none;">
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.78 0.012 240); margin-bottom: 20px;">02 — Made to spec</div>
+          <h2 style="font-size: 52px; line-height: 1.05; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">Custom Designs</h2>
+          <p style="font-size: 17px; line-height: 1.6; color: oklch(0.7 0.008 60); margin: 0 0 28px;">Send your specs — we model, tolerance, and hand off a part built for your machine.</p>
+          <a href="https://wa.me/15551234567?text=Hi%2C%20I%27d%20like%20a%20custom%20design" class="icon-btn" style="background: oklch(0.65 0.1 300); color: oklch(0.14 0.004 60); font-size: 15px; font-weight: 700; pointer-events: {{ section2Pointer }};">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M4 20l1.2-4.4L15.6 5.2a1.5 1.5 0 0 1 2.1 0l1.1 1.1a1.5 1.5 0 0 1 0 2.1L8.4 18.8 4 20z" fill="currentColor"></path></svg>
+            <span class="icon-btn-label">Request a Design</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="position: absolute; top: 0; right: 0; width: 38%; height: 100%; display: flex; align-items: center; padding: 0 64px; opacity: {{ section3Opacity }}; transform: translateY({{ section3Y }}vh); transition: opacity 0.4s linear, transform 0.4s linear; pointer-events: {{ section3Pointer }};">
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.7 0.15 25); margin-bottom: 20px;">03 — Learn the craft</div>
+          <h2 style="font-size: 52px; line-height: 1.05; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">YouTube Tutorials</h2>
+          <p style="font-size: 17px; line-height: 1.6; color: oklch(0.7 0.008 60); margin: 0 0 28px;">Setup sheets, fixturing tips, and full machining walkthroughs on our channel.</p>
+          <a href="#" class="icon-btn" style="background: oklch(0.55 0.2 25); color: oklch(0.98 0.01 25); font-size: 15px; font-weight: 700; pointer-events: auto;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M23 12s0-3.6-.46-5.16a2.9 2.9 0 0 0-2.05-2.05C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.49.5a2.9 2.9 0 0 0-2.05 2.05C1 8.4 1 12 1 12s0 3.6.46 5.16a2.9 2.9 0 0 0 2.05 2.05C5.1 19.7 12 19.7 12 19.7s6.9 0 8.49-.5a2.9 2.9 0 0 0 2.05-2.05C23 15.6 23 12 23 12z" fill="currentColor"></path><path d="M9.75 15.5v-7l6 3.5-6 3.5z" fill="oklch(0.55 0.2 25)"></path></svg>
+            <span class="icon-btn-label">Watch on YouTube</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="position: absolute; top: 0; right: 0; width: 38%; height: 100%; display: flex; align-items: center; padding: 0 64px; opacity: {{ section4Opacity }}; transform: translateY({{ section4Y }}vh); transition: opacity 0.4s linear, transform 0.4s linear; pointer-events: {{ section4Pointer }};">
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.7 0.13 145); margin-bottom: 20px;">04 — Talk to us</div>
+          <h2 style="font-size: 52px; line-height: 1.05; font-weight: 800; margin: 0 0 20px; letter-spacing: -0.02em;">Get in Touch</h2>
+          <p style="font-size: 17px; line-height: 1.6; color: oklch(0.7 0.008 60); margin: 0 0 28px;">Tell us what you need machined — we'll quote it and walk you through the file.</p>
+          <a href="https://wa.me/15551234567" class="icon-btn" style="background: oklch(0.55 0.18 145); color: oklch(0.98 0.01 145); font-size: 15px; font-weight: 700; pointer-events: auto;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.06-1.33A10 10 0 1 0 12 2z" fill="currentColor"></path><path d="M8.9 7.7c.22-.5.45-.5.66-.5h.54c.18 0 .4-.02.58.4.2.5.68 1.66.74 1.78.06.12.1.26.02.42-.08.16-.13.26-.26.4-.13.14-.27.32-.39.43-.13.12-.26.25-.11.5.53.9 1.16 1.6 1.9 2.16.83.62 1.28.83 1.47.9.18.08.3.06.4-.06.13-.14.55-.64.7-.86.15-.22.3-.18.5-.11.2.08 1.28.6 1.5.72.22.11.37.16.42.26.06.1.06.55-.13 1.08-.2.53-1.13 1.02-1.55 1.08-.42.06-.78.24-2.6-.55-2.2-.94-3.6-3.22-3.7-3.37-.1-.14-.83-1.1-.83-2.1 0-1 .53-1.5.72-1.7z" fill="oklch(0.55 0.18 145)"></path></svg>
+            <span class="icon-btn-label">Message us on WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid oklch(0.3 0.01 60); padding: 48px; max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: oklch(0.6 0.008 60);">
+    <div style="font-weight: 700; font-size: 16px; color: oklch(0.94 0.004 60);">TOLERANCE</div>
+    <div style="display: flex; gap: 32px;">
+      <a href="#">Browse</a>
+      <a href="#">Sell</a>
+      <a href="#">Help</a>
+      <a href="#">Terms</a>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { progress: 0 };
+
+  componentDidMount() {
+    this.heroEl = null;
+    this.iframeEl = null;
+    this.INTRO_FRAC = 80 / 930;
+    this.onScroll = () => {
+      if (!this.heroEl) return;
+      const rect = this.heroEl.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const p = total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
+      this.setState({ progress: p });
+      const gearP = p <= this.INTRO_FRAC ? 0 : (p - this.INTRO_FRAC) / (1 - this.INTRO_FRAC);
+      if (this.iframeEl && this.iframeEl.contentWindow) {
+        this.iframeEl.contentWindow.postMessage({ progress: gearP }, "*");
+      }
+    };
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this.onScroll();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll);
+  }
+
+  renderVals() {
+    const p = this.state.progress;
+    const introFrac = this.INTRO_FRAC ?? (80 / 930);
+    const introP = Math.max(0, Math.min(1, p / introFrac));
+    const gearP = p <= introFrac ? 0 : (p - introFrac) / (1 - introFrac);
+    const introOffsetVw = 21 * (1 - introP);
+    const introOpacity = introP > 0.8 ? Math.max(0, (1 - introP) / 0.2) : 1;
+
+    const width = 0.2;
+    const fadeAbove = (center) => {
+      if (p <= introFrac) return 0;
+      if (gearP <= center) return gearP >= center - width ? 1 : 0;
+      return Math.max(0, 1 - (gearP - center) / width);
+    };
+    const centers = [0.05, 0.35, 0.65, 0.95];
+    const [s1, s2, s3, s4] = centers.map(fadeAbove);
+    return {
+      heroRef: (el) => { this.heroEl = el; },
+      iframeRef: (el) => { this.iframeEl = el; },
+      introOffsetVw,
+      introOpacity,
+      section1Opacity: s1,
+      section2Opacity: s2,
+      section3Opacity: s3,
+      section4Opacity: s4,
+      section1Y: (centers[0] - gearP) * 140,
+      section2Y: (centers[1] - gearP) * 140,
+      section3Y: (centers[2] - gearP) * 140,
+      section4Y: (centers[3] - gearP) * 140,
+      section2Pointer: s2 > 0.5 ? "auto" : "none",
+      section3Pointer: s3 > 0.5 ? "auto" : "none",
+      section4Pointer: s4 > 0.5 ? "auto" : "none"
+    };
+  }
+}
+
+</script>
+</body>
+</html>

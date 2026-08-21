@@ -11,102 +11,19 @@ function spreadAt(p: number) {
   return Math.sin(Math.max(0, Math.min(1, p)) * Math.PI)
 }
 
-/** Free STL downloads often carry a small disconnected watermark blob fused
- *  into the file — split into connected pieces and keep only the real object. */
-function keepLargestSolid(THREE: typeof THREE_NS, geo: THREE_NS.BufferGeometry) {
-  const pos = geo.attributes.position
-  const triCount = pos.count / 3
-  const parent = new Int32Array(pos.count)
-  for (let i = 0; i < pos.count; i++) parent[i] = i
-  function find(a: number): number {
-    while (parent[a] !== a) {
-      parent[a] = parent[parent[a]]
-      a = parent[a]
-    }
-    return a
-  }
-  function union(a: number, b: number) {
-    a = find(a)
-    b = find(b)
-    if (a !== b) parent[a] = b
-  }
-
-  const keyToVert = new Map<string, number>()
-  const scale = 1e4
-  for (let i = 0; i < pos.count; i++) {
-    const k = Math.round(pos.getX(i) * scale) + '_' + Math.round(pos.getY(i) * scale) + '_' + Math.round(pos.getZ(i) * scale)
-    if (keyToVert.has(k)) union(i, keyToVert.get(k)!)
-    else keyToVert.set(k, i)
-  }
-  for (let t = 0; t < triCount; t++) {
-    union(t * 3, t * 3 + 1)
-    union(t * 3 + 1, t * 3 + 2)
-  }
-  const triRoot = new Int32Array(triCount)
-  const sizeByRoot = new Map<number, number>()
-  for (let t = 0; t < triCount; t++) {
-    const r = find(t * 3)
-    triRoot[t] = r
-    sizeByRoot.set(r, (sizeByRoot.get(r) || 0) + 1)
-  }
-  if (sizeByRoot.size <= 1) return geo // single solid, nothing to strip
-
-  const bboxByRoot = new Map<number, { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number }>()
-  for (let t = 0; t < triCount; t++) {
-    const r = triRoot[t]
-    let bb = bboxByRoot.get(r)
-    if (!bb) {
-      bb = { minX: Infinity, minY: Infinity, minZ: Infinity, maxX: -Infinity, maxY: -Infinity, maxZ: -Infinity }
-      bboxByRoot.set(r, bb)
-    }
-    for (let v = 0; v < 3; v++) {
-      const idx = t * 3 + v
-      const x = pos.getX(idx),
-        y = pos.getY(idx),
-        z = pos.getZ(idx)
-      if (x < bb.minX) bb.minX = x
-      if (x > bb.maxX) bb.maxX = x
-      if (y < bb.minY) bb.minY = y
-      if (y > bb.maxY) bb.maxY = y
-      if (z < bb.minZ) bb.minZ = z
-      if (z > bb.maxZ) bb.maxZ = z
-    }
-  }
-  let overallMaxDiag = 0
-  bboxByRoot.forEach((bb) => {
-    const diag = Math.hypot(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ)
-    if (diag > overallMaxDiag) overallMaxDiag = diag
-  })
-  const keepRoots = new Set<number>()
-  bboxByRoot.forEach((bb, root) => {
-    const diag = Math.hypot(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ)
-    if (diag >= overallMaxDiag * 0.12) keepRoots.add(root) // drop tiny watermark-scale blobs only
-  })
-
-  const keptTris: number[] = []
-  for (let t = 0; t < triCount; t++) if (keepRoots.has(triRoot[t])) keptTris.push(t)
-  if (keptTris.length === triCount) return geo // nothing to strip
-
-  const newPos = new Float32Array(keptTris.length * 9)
-  for (let i = 0; i < keptTris.length; i++) {
-    const t = keptTris[i]
-    for (let v = 0; v < 3; v++) {
-      const src = t * 3 + v
-      newPos[i * 9 + v * 3] = pos.getX(src)
-      newPos[i * 9 + v * 3 + 1] = pos.getY(src)
-      newPos[i * 9 + v * 3 + 2] = pos.getZ(src)
-    }
-  }
-  const cleaned = new THREE.BufferGeometry()
-  cleaned.setAttribute('position', new THREE.BufferAttribute(newPos, 3))
-  cleaned.computeVertexNormals()
-  return cleaned
-}
-
-/** Loads the carved-leg STL, builds a solid+wireframe pair, and drives its
+/** Loads the carved-leg model, builds a solid+wireframe pair, and drives its
  *  rotation/spread/material crossfade off a scroll-driven progress value
  *  (0–1) supplied by the caller each render — same behavior as the original
- *  HomeHero.html iframe, just driven directly instead of via postMessage. */
+ *  HomeHero.html iframe, just driven directly instead of via postMessage.
+ *
+ *  The source asset is a compressed GLB (weld + KHR_mesh_quantization +
+ *  EXT_meshopt_compression via gltf-transform), converted offline from the
+ *  original 17.6MB / 352,859-triangle STL by scripts/convert-carved-leg.mjs.
+ *  Same geometry, same triangle count — quantization and meshopt's entropy
+ *  coding are lossless-enough (imperceptible) at web scale — just ~13x
+ *  smaller and far cheaper to parse than raw STL, so it loads fast. The
+ *  watermark-blob strip the STL needed is baked into that asset too, so it
+ *  no longer runs on every page load. */
 export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | null>, progress: number) {
   const progressRef = useRef(progress)
   progressRef.current = progress
@@ -119,21 +36,31 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
 
     stage.ready.then(async ({ THREE }) => {
       if (cancelled) return
-      const { STLLoader } = await import('three/addons/loaders/STLLoader.js')
-      const rawGeometry = await new STLLoader().loadAsync('/uploads/cleaned-carved-leg.stl')
+      const [{ GLTFLoader }, { MeshoptDecoder }] = await Promise.all([
+        import('three/addons/loaders/GLTFLoader.js'),
+        import('three/addons/libs/meshopt_decoder.module.js'),
+      ])
+      const loader = new GLTFLoader()
+      loader.setMeshoptDecoder(MeshoptDecoder)
+      const gltf = await loader.loadAsync('/uploads/carved-leg.glb')
       if (cancelled) return
 
-      const geometry = keepLargestSolid(THREE, rawGeometry)
-      geometry.computeBoundingBox()
-      geometry.computeVertexNormals()
-      const box = geometry.boundingBox!
+      let foundMesh: THREE_NS.Mesh | undefined
+      gltf.scene.traverse((o) => {
+        if (!foundMesh && (o as THREE_NS.Mesh).isMesh) foundMesh = o as THREE_NS.Mesh
+      })
+      if (!foundMesh) return
+      const geo: THREE_NS.BufferGeometry = foundMesh.geometry
+
+      geo.computeBoundingBox()
+      const box = geo.boundingBox!
       const center = new THREE.Vector3()
       box.getCenter(center)
-      geometry.translate(-center.x, -center.y, -center.z)
+      geo.translate(-center.x, -center.y, -center.z)
       const size = new THREE.Vector3()
       box.getSize(size)
       const maxDim = Math.max(size.x, size.y, size.z) || 1
-      geometry.translate(0, -size.y * 0.05, 0)
+      geo.translate(0, -size.y * 0.05, 0)
       const scale = 0.2 / maxDim
 
       const mat = new THREE.MeshStandardMaterial({
@@ -143,6 +70,15 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
         roughness: 0.55,
         transparent: true,
         opacity: 0,
+        // The wireframe edges below share this exact geometry, so their
+        // lines sit at the same depth as the solid mesh's faces. Without an
+        // offset, floating-point depth precision flips which one wins as
+        // the object rotates, making edges flicker in and out. Nudging the
+        // solid faces back in the depth buffer keeps the wireframe reliably
+        // on top.
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
       })
       const wireMat = new THREE.LineBasicMaterial({
         color: 0x8fd8ff,
@@ -152,12 +88,12 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
         depthWrite: false,
       })
 
-      const mesh = new THREE.Mesh(geometry, mat)
+      const mesh = new THREE.Mesh(geo, mat)
       mesh.name = 'carved_column_solid'
       mesh.castShadow = true
       mesh.receiveShadow = true
 
-      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 25), wireMat)
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), wireMat)
       edges.name = 'carved_column_wire'
 
       const group = new THREE.Group()
@@ -173,7 +109,11 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
       let idleSpin = 0
       const applyProgress = (p: number) => {
         outer.rotation.y = p * Math.PI * 5 + idleSpin
-        outer.rotation.x = 0.1
+        // Lean the column diagonally across the frame instead of standing
+        // it straight up — combined x/z tilt keeps it dynamic through the
+        // spin instead of reading as a plain vertical post.
+        outer.rotation.x = 0.32
+        outer.rotation.z = 0.42
         const s = spreadAt(p)
         outer.scale.setScalar(1 + s * 0.08)
         outer.position.y = s * 0.015

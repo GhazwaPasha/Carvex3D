@@ -92,15 +92,10 @@ class ThreeDStage extends HTMLElement {
     root.appendChild(note);
     this._toolbar = document.createElement('div');
     this._toolbar.className = 'toolbar';
-    this._objBtn = document.createElement('button');
-    this._objBtn.type = 'button';
-    this._objBtn.textContent = 'Download OBJ + MTL';
-    this._objBtn.addEventListener('click', () => this._runExport('obj'));
     this._glbBtn = document.createElement('button');
     this._glbBtn.type = 'button';
     this._glbBtn.textContent = 'Download GLB';
-    this._glbBtn.addEventListener('click', () => this._runExport('glb'));
-    this._toolbar.appendChild(this._objBtn);
+    this._glbBtn.addEventListener('click', () => this._runExport());
     this._toolbar.appendChild(this._glbBtn);
     root.appendChild(this._toolbar);
     this._setButtonsEnabled(false);
@@ -255,7 +250,6 @@ class ThreeDStage extends HTMLElement {
   }
 
   _setButtonsEnabled(on) {
-    this._objBtn.disabled = !on;
     this._glbBtn.disabled = !on;
   }
 
@@ -286,30 +280,9 @@ class ThreeDStage extends HTMLElement {
     return mats;
   }
 
-  async _runExport(format) {
+  async _runExport() {
     if (!this._object) return;
-    await (format === 'obj' ? this._exportObj() : this._exportGlb());
-  }
-
-  async _exportObj() {
-    if (!this._object) return;
-    const mod = await import('three/addons/exporters/OBJExporter.js');
-    const mats = this._nameParts();
-    const base = this._basename;
-    const obj = 'mtllib ' + base + '.mtl\n' + new mod.OBJExporter().parse(this._object);
-    let mtl = '# Exported by three-d-stage\n';
-    for (const m of mats) {
-      const c = m.color || { r: 0.8, g: 0.8, b: 0.8 };
-      const rough = typeof m.roughness === 'number' ? m.roughness : 0.5;
-      const opacity = typeof m.opacity === 'number' ? m.opacity : 1;
-      mtl += 'newmtl ' + m.name + '\n';
-      mtl += 'Kd ' + c.r.toFixed(4) + ' ' + c.g.toFixed(4) + ' ' + c.b.toFixed(4) + '\n';
-      mtl += 'Ks 0.2000 0.2000 0.2000\n';
-      mtl += 'Ns ' + Math.round((1 - rough) * 200) + '\n';
-      mtl += 'd ' + opacity.toFixed(4) + '\n\n';
-    }
-    download(new Blob([obj], { type: 'text/plain' }), base + '.obj');
-    download(new Blob([mtl], { type: 'text/plain' }), base + '.mtl');
+    await this._exportGlb();
   }
 
   async _exportGlb() {

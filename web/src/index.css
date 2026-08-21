@@ -41,6 +41,16 @@ a {
   background: oklch(0.35 0.01 240);
 }
 
+/* Hides the page scrollbar while leaving scrolling fully functional.
+   Applied to <html> only while the homepage is mounted (see Home.tsx). */
+html.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+html.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, new Edge */
+}
+
 .bg-grid {
   background-image:
     linear-gradient(oklch(0.22 0.006 60 / 0.5) 1px, transparent 1px),

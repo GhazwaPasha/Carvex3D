@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -13,6 +13,14 @@ export default function Home() {
   const stageRef = useRef<ThreeDStageElement>(null)
   const v = useHeroScroll(heroRef)
   useCarvedLegHero(stageRef, v.gearP)
+
+  // Hide the scrollbar chrome on the homepage only, without disabling
+  // scroll itself — the scroll-driven hero above still reads window
+  // scroll position as normal.
+  useEffect(() => {
+    document.documentElement.classList.add('scrollbar-hidden')
+    return () => document.documentElement.classList.remove('scrollbar-hidden')
+  }, [])
 
   return (
     <div className="min-h-screen bg-[rgb(24,27,31)] text-(--color-ink)">

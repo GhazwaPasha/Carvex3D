@@ -15,6 +15,23 @@
       name="description"
       content="Toleranced, shop-tested CAD files ready to mill or lathe today."
     />
+    <script type="text/javascript">
+      // Decodes the path 404.html repackaged into a query string (see
+      // web/public/404.html) back into a real path before React Router
+      // ever sees it — must run before main.tsx.
+      ;(function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search
+            .slice(1)
+            .split('&')
+            .map(function (s) {
+              return s.replace(/~and~/g, '&')
+            })
+            .join('?')
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
+        }
+      })(window.location)
+    </script>
   </head>
   <body>
     <div id="root"></div>

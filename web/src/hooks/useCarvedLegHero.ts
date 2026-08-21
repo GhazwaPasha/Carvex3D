@@ -45,21 +45,22 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
       const gltf = await loader.loadAsync('/uploads/carved-leg.glb')
       if (cancelled) return
 
-      let geometry: THREE_NS.BufferGeometry | null = null
+      let foundMesh: THREE_NS.Mesh | undefined
       gltf.scene.traverse((o) => {
-        if (!geometry && (o as THREE_NS.Mesh).isMesh) geometry = (o as THREE_NS.Mesh).geometry
+        if (!foundMesh && (o as THREE_NS.Mesh).isMesh) foundMesh = o as THREE_NS.Mesh
       })
-      if (!geometry) return
+      if (!foundMesh) return
+      const geo: THREE_NS.BufferGeometry = foundMesh.geometry
 
-      geometry.computeBoundingBox()
-      const box = geometry.boundingBox!
+      geo.computeBoundingBox()
+      const box = geo.boundingBox!
       const center = new THREE.Vector3()
       box.getCenter(center)
-      geometry.translate(-center.x, -center.y, -center.z)
+      geo.translate(-center.x, -center.y, -center.z)
       const size = new THREE.Vector3()
       box.getSize(size)
       const maxDim = Math.max(size.x, size.y, size.z) || 1
-      geometry.translate(0, -size.y * 0.05, 0)
+      geo.translate(0, -size.y * 0.05, 0)
       const scale = 0.2 / maxDim
 
       const mat = new THREE.MeshStandardMaterial({
@@ -87,12 +88,12 @@ export function useCarvedLegHero(stageRef: React.RefObject<ThreeDStageElement | 
         depthWrite: false,
       })
 
-      const mesh = new THREE.Mesh(geometry, mat)
+      const mesh = new THREE.Mesh(geo, mat)
       mesh.name = 'carved_column_solid'
       mesh.castShadow = true
       mesh.receiveShadow = true
 
-      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 25), wireMat)
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), wireMat)
       edges.name = 'carved_column_wire'
 
       const group = new THREE.Group()
